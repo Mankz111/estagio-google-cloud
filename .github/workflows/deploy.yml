@@ -19,7 +19,7 @@ jobs:
 
 
     steps:
-      - name: checkout
+      - name: checkout code
         uses: actions/checkout@v4
 
       - name: auth
