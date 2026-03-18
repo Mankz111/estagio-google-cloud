@@ -40,13 +40,7 @@ jobs:
         run: docker push europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{github.sha}}
       
       - name: deploy
-        run: |
-          gcloud run deploy ${{env.SERVICE}} /
-          --image europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{github.sha}} /
-          --region ${{env.REGION}} /
-          --plataform managed /
-          --alow-unauthenticated /
-          --quiet
+        run: gcloud run deploy ${{ env.SERVICE }} --image europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ github.sha }} --region ${{ env.REGION }} --platform managed --allow-unauthenticated --quiet
       
       - name: URL
         run: |
