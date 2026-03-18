@@ -44,13 +44,13 @@ jobs:
           gcloud run deploy ${{env.SERVICE}} /
           --image europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{github.sha}} /
           --region ${{env.REGION}} /
-          --plataform managed
-          --alow-unauthenticated
+          --plataform managed /
+          --alow-unauthenticated /
           --quiet
       
       - name: URL
         run: |
-          --region ${{env.REGION}}
+          --region ${{env.REGION}} /
           --format="value(status.url)"
 
 
