@@ -1,0 +1,61 @@
+name: exec google
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: europe-west1
+  SERVICE: estagio-app
+  REPO: estagio-repo
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: auth
+        uses: 'google-github-actions/auth@v3'
+        with:
+          credentials_json: ${{secrets.GSP_SA_KEY}}
+
+      - name: gcloud cli
+        uses: 'google-github-actions/setup-gcloud@v3'
+      
+      - name: config docker
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev --quiet
+
+      - name: docker build
+        run: docker build -t europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{github.sha}}
+
+      - name: push
+        run: docker push europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{github.sha}}
+      
+      - name: deploy
+        run: |
+          gcloud run deploy ${{env.SERVICE}} /
+          --image europe-west1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{github.sha}} /
+          --region ${{env.REGION}} /
+          --plataform managed
+          --alow-unauthenticated
+          --quiet
+      
+      - name: URL
+        run: |
+          --region ${{env.REGION}}
+          --format="value(status.url)"
+
+
+
+
+
+      
+
